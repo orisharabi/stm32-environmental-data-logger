@@ -1,0 +1,22 @@
+# Build outputs
+/Debug/
+/Release/
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.su
+*.cyclo
+
+# Local debug configurations
+*.launch
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
