@@ -46,6 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+static volatile uint8_t measurement_due = 0;
 
 /* USER CODE END PV */
 
@@ -93,6 +94,10 @@ int main(void)
   MX_TIM3_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  if (HAL_TIM_Base_Start_IT(&htim3) != HAL_OK)
+    {
+      Error_Handler();
+    }
 
   /* USER CODE END 2 */
 
@@ -103,6 +108,22 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  uint32_t previous_state = __get_PRIMASK();
+
+	  __disable_irq();
+
+	  uint8_t due = measurement_due;
+
+	  measurement_due = 0;
+
+
+	  __set_PRIMASK(previous_state);
+
+	  if(due)
+	  {
+
+		  HAL_GPIO_TogglePin(STATUS_LED_GPIO_Port,STATUS_LED_Pin);
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -154,6 +175,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance == TIM3)
+	{
+		measurement_due = 1;
+	}
+}
 
 /* USER CODE END 4 */
 
